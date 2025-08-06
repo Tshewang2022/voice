@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-// what special features that i am providing, needs to really crack down on this one
+
 class HomeScreen extends StatefulWidget {
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
-// read the code line by line and understand the code
+
 class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   int _selectedTab = 0;
   late AnimationController _drawerAnimationController;
@@ -122,6 +122,14 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         backgroundColor: const Color(0xFF0088CC),
         elevation: 0,
         automaticallyImplyLeading: false,
+        title: const Text(
+          "Voice App",
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.search, color: Colors.white),
@@ -135,6 +143,30 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           ),
         ],
       ),
+      floatingActionButton: _selectedTab == 0 ? Container(
+        width: 56,
+        height: 56,
+        margin: const EdgeInsets.only(bottom: 80, right: 16),
+        child: FloatingActionButton(
+          onPressed: () {
+            // Navigate to new chat screen
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('New chat'),
+                duration: Duration(seconds: 1),
+              ),
+            );
+          },
+          backgroundColor: const Color(0xFF0088CC),
+          elevation: 6,
+          child: const Icon(
+            Icons.chat,
+            color: Colors.white,
+            size: 28,
+          ),
+        ),
+      ) : null,
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       body: Stack(
         children: [
           Column(
