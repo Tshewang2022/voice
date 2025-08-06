@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-
+// dateline 30/10/2025
+// all needs to be spread out into the components
+// i am most interested in the backend technologies
 class HomeScreen extends StatefulWidget {
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -11,7 +13,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   late Animation<Offset> _drawerSlideAnimation;
   bool _isDrawerOpen = false;
 
-  // Sample chat data
+  // Sample chat data, should have come only the one that person is linked
   final List<Map<String, dynamic>> _chats = [
     {
       'name': 'John Doe',
@@ -30,7 +32,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       'isOnline': false,
     },
     {
-      'name': 'Tech Team',
+      'name': 'Tshewang Gyaltshen',
       'lastMessage': 'Meeting at 3 PM tomorrow',
       'time': '12:20 PM',
       'avatar': 'T',
@@ -63,6 +65,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     },
   ];
 
+  // should display only the group that he is in
   final List<Map<String, dynamic>> _groups = [
     {
       'name': 'Flutter Developers',
@@ -354,6 +357,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             duration: const Duration(seconds: 1),
           ),
         );
+        Navigator.pushNamed(context, '/chats');
       },
     );
   }
@@ -431,8 +435,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 children: [
                   _buildDrawerItem(Icons.group, 'New Group'),
                   _buildDrawerItem(Icons.person_add, 'Contacts'),
-                  _buildDrawerItem(Icons.phone, 'Calls'),
-                  _buildDrawerItem(Icons.bookmark, 'Saved Messages'),
                   _buildDrawerItem(Icons.settings, 'Settings'),
                   const Divider(),
                   _buildDrawerItem(Icons.help_outline, 'Help'),

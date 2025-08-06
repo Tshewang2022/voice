@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/screens/auth/password.dart';
 import 'dart:async';
 
 class OtpScreen extends StatefulWidget {
@@ -108,8 +107,8 @@ class _OtpScreenState extends State<OtpScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: List.generate(4, (index) {
                   return SizedBox(
-                    width: 60,
-                    height: 60,
+                    width: 46,
+                    height: 46,
                     child: TextField(
                       controller: _controllers[index],
                       focusNode: _focusNodes[index],
