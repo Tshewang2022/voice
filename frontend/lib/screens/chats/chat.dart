@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
-
+// breaking down into the smaller and maintainable code will be
+// crucial for this application
+// need to modify the ui changes, expected to complete the rough sketch today
 class Chats extends StatefulWidget {
   @override
   State<Chats> createState() => _ChatsState();
@@ -163,15 +165,6 @@ class _ChatsState extends State<Chats> {
               );
             },
           ),
-          IconButton(
-            icon: Icon(Icons.videocam, color: Colors.white),
-            onPressed: () {
-              // Handle video call
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Video call initiated')),
-              );
-            },
-          ),
           PopupMenuButton<String>(
             icon: Icon(Icons.more_vert, color: Colors.white),
             onSelected: (value) {
@@ -180,9 +173,9 @@ class _ChatsState extends State<Chats> {
             itemBuilder: (BuildContext context) => [
               PopupMenuItem(value: 'view_profile', child: Text('View Profile')),
               PopupMenuItem(value: 'media', child: Text('Media, Links and Docs')),
-              PopupMenuItem(value: 'search', child: Text('Search')),
               PopupMenuItem(value: 'mute', child: Text('Mute Notifications')),
               PopupMenuItem(value: 'clear', child: Text('Clear History')),
+              PopupMenuItem(value: 'clear', child: Text('Block')),
             ],
           ),
         ],

@@ -146,7 +146,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           ),
         ],
       ),
-      floatingActionButton: _selectedTab == 0 ? Container(
+      // Show FloatingActionButton only when drawer is closed AND on chats tab
+      floatingActionButton: (_selectedTab == 0 && !_isDrawerOpen) ? Container(
         width: 56,
         height: 56,
         margin: const EdgeInsets.only(bottom: 80, right: 16),
