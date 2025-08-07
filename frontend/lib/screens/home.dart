@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 // dateline 30/10/2025
-// all needs to be spread out into the components
-// i am most interested in the backend technologies
-// the real work begins from here
+// need to spread into the modular components
+// instead of the word chat, need chat icon
+// each button and text should define meaning
 class HomeScreen extends StatefulWidget {
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -154,7 +154,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         margin: const EdgeInsets.only(bottom: 80, right: 16),
         child: FloatingActionButton(
           onPressed: () {
-           Navigator.pushNamed(context, '/addperson');
+           Navigator.pushNamed(context, '/chats');
           },
           backgroundColor: const Color(0xFF0088CC),
           elevation: 6,
@@ -353,7 +353,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             duration: const Duration(seconds: 1),
           ),
         );
-       Navigator.pushNamed(context, '/groupchat');
+       Navigator.pushNamed(context, '/chats');
       },
     );
   }
