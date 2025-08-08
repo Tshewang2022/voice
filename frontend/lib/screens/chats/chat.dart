@@ -21,11 +21,14 @@ class _ChatsState extends State<Chats> with SingleTickerProviderStateMixin {
   final TextEditingController _messageController = TextEditingController();
   final FocusNode _messageFocusNode = FocusNode();
   final ScrollController _scrollController = ScrollController();
+  final GlobalKey _moreButtonKey = GlobalKey();
 
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
 
   bool _isTyping = false;
+  bool _showDropdown = false;
+  OverlayEntry? _overlayEntry;
 
   // Sample individual chat data - in real app this would come from backend
   final List<Map<String, dynamic>> _messages = [
@@ -146,168 +149,122 @@ class _ChatsState extends State<Chats> with SingleTickerProviderStateMixin {
   }
 
   void _showContactInfo() {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+    final RenderBox renderBox = _moreButtonKey.currentContext?.findRenderObject() as RenderBox;
+    final position = renderBox.localToGlobal(Offset.zero);
+
+    if (_overlayEntry != null) {
+      _removeOverlay();
+      return;
+    }
+
+    _overlayEntry = OverlayEntry(
+      builder: (context) => GestureDetector(
+        onTap: _removeOverlay,
+        child: Material(
+          color: Colors.transparent,
+          child: Stack(
+            children: [
+              Positioned(
+                top: position.dy + 40,
+                right: 16,
+                child: TweenAnimationBuilder(
+                  duration: const Duration(milliseconds: 200),
+                  tween: Tween<double>(begin: 0.0, end: 1.0),
+                  builder: (context, double value, child) {
+                    return Transform.scale(
+                      scale: value,
+                      alignment: Alignment.topRight,
+                      child: Opacity(
+                        opacity: value,
+                        child: _buildContactInfoSheet(),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
-      builder: (context) => _buildContactInfoSheet(),
     );
+
+    Overlay.of(context).insert(_overlayEntry!);
+    setState(() => _showDropdown = true);
+  }
+
+  void _removeOverlay() {
+    _overlayEntry?.remove();
+    _overlayEntry = null;
+    setState(() => _showDropdown = false);
   }
 
   Widget _buildContactInfoSheet() {
     return Container(
-      height: MediaQuery.of(context).size.height * 0.6,
-      padding: const EdgeInsets.all(20),
+      width: 200,
+      decoration: BoxDecoration(
+        color: Colors.white, // Light background to match chat
+        borderRadius: BorderRadius.circular(8),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
-          // Handle bar
-          Center(
-            child: Container(
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                color: Colors.grey.shade300,
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-          ),
-          const SizedBox(height: 20),
-
-          // Contact info header
-          Center(
-            child: Column(
-              children: [
-                CircleAvatar(
-                  radius: 40,
-                  backgroundColor: const Color(0xFF0088CC),
-                  child: Text(
-                    widget.contactAvatar ?? widget.contactName?.substring(0, 1).toUpperCase() ?? 'J',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 28,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  widget.contactName ?? 'John Doe',
-                  style: const TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black87,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  widget.isOnline ?? true ? 'Online' : 'Last seen recently',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: (widget.isOnline ?? true) ? Colors.green : Colors.grey.shade600,
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          const SizedBox(height: 40),
-
-          // Action buttons
-          _buildActionButton(
-            icon: Icons.call_outlined,
-            title: 'Voice Call',
-            onTap: () {
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Voice call initiated')),
-              );
-            },
-          ),
-
-          _buildActionButton(
-            icon: Icons.videocam_outlined,
-            title: 'Video Call',
-            onTap: () {
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Video call initiated')),
-              );
-            },
-          ),
-
-          _buildActionButton(
-            icon: Icons.photo_library_outlined,
-            title: 'View Media',
-            onTap: () {
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Opening media gallery')),
-              );
-            },
-          ),
-
-          _buildActionButton(
-            icon: Icons.notifications_off_outlined,
-            title: 'Mute Notifications',
-            onTap: () {
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Notifications muted')),
-              );
-            },
-          ),
-
-          _buildActionButton(
-            icon: Icons.block_outlined,
-            title: 'Block Contact',
-            onTap: () {
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Contact blocked')),
-              );
-            },
-            isDestructive: true,
-          ),
+          _buildMenuOption(Icons.person_outline, 'View profile'),
+          _buildMenuDivider(),
+          _buildMenuOption(Icons.notifications_off_outlined, 'Mute notifications'),
+          _buildMenuDivider(),
+          _buildMenuOption(Icons.search_outlined, 'Search'),
+          _buildMenuDivider(),
+          _buildMenuOption(Icons.delete_outline, 'Clear history', isDestructive: true),
+          _buildMenuDivider(),
+          _buildMenuOption(Icons.block_outlined, 'Block user', isDestructive: true),
         ],
       ),
     );
   }
 
-  Widget _buildActionButton({
-    required IconData icon,
-    required String title,
-    required VoidCallback onTap,
-    bool isDestructive = false,
-  }) {
-    return ListTile(
-      contentPadding: EdgeInsets.zero,
-      leading: Container(
-        width: 44,
-        height: 44,
-        decoration: BoxDecoration(
-          color: isDestructive
-              ? Colors.red.withOpacity(0.1)
-              : const Color(0xFF0088CC).withOpacity(0.1),
-          shape: BoxShape.circle,
-        ),
-        child: Icon(
-          icon,
-          color: isDestructive ? Colors.red : const Color(0xFF0088CC),
-          size: 22,
-        ),
-      ),
-      title: Text(
-        title,
-        style: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w500,
-          color: isDestructive ? Colors.red : Colors.black87,
+  Widget _buildMenuOption(IconData icon, String title, {bool isDestructive = false}) {
+    return InkWell(
+      onTap: () {
+        _removeOverlay();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('$title selected')),
+        );
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        child: Row(
+          children: [
+            Icon(
+              icon,
+              size: 20,
+              color: isDestructive ? Colors.red : Colors.grey.shade700, // Light colors to match chat
+            ),
+            const SizedBox(width: 12),
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 16,
+                color: isDestructive ? Colors.red : Colors.black87, // Dark text on light background
+              ),
+            ),
+          ],
         ),
       ),
-      onTap: onTap,
+    );
+  }
+
+  Widget _buildMenuDivider() {
+    return Container(
+      height: 1,
+      margin: const EdgeInsets.symmetric(horizontal: 12),
+      color: Colors.grey.shade200, // Light divider
     );
   }
 
@@ -399,7 +356,9 @@ class _ChatsState extends State<Chats> with SingleTickerProviderStateMixin {
               );
             },
           ),
+          // main more_vert icon
           IconButton(
+            key: _moreButtonKey,
             icon: const Icon(Icons.more_vert, color: Colors.white),
             onPressed: _showContactInfo,
           ),
@@ -737,6 +696,7 @@ class _ChatsState extends State<Chats> with SingleTickerProviderStateMixin {
 
   @override
   void dispose() {
+    _removeOverlay();
     _messageController.dispose();
     _messageFocusNode.dispose();
     _scrollController.dispose();

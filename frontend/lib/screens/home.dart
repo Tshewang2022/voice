@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 // dateline 30/10/2025
 // need to spread into the modular components
 // instead of the word chat, need chat icon
-// each button and text should define meaning
+// each button and text should define meaning, regarding there position, size and color
+// nothing exist out of random
 class HomeScreen extends StatefulWidget {
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
+// i just wanted to solve the real world problems
 
 class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   int _selectedTab = 0;
@@ -67,6 +69,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   ];
 
   // should display only the group that he is in
+  // it should be broken down into the smaller code base
+  // for easier maintenance
   final List<Map<String, dynamic>> _groups = [
     {
       'name': 'Flutter Developers',
@@ -154,7 +158,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         margin: const EdgeInsets.only(bottom: 80, right: 16),
         child: FloatingActionButton(
           onPressed: () {
-           Navigator.pushNamed(context, '/chats');
+           Navigator.pushNamed(context, '/addperson');
           },
           backgroundColor: const Color(0xFF0088CC),
           elevation: 6,
@@ -347,12 +351,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       ),
       onTap: () {
         // Navigate to chat screen
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Opening chat with ${item['name']}'),
-            duration: const Duration(seconds: 1),
-          ),
-        );
        Navigator.pushNamed(context, '/chats');
       },
     );
