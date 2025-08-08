@@ -130,22 +130,6 @@ class _OtpScreenState extends State<OtpScreen>
     // Provide haptic feedback
     HapticFeedback.heavyImpact();
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: const Row(
-          children: [
-            Icon(Icons.verified, color: Colors.white, size: 20),
-            SizedBox(width: 8),
-            Text('OTP verified successfully!'),
-          ],
-        ),
-        backgroundColor: Colors.green,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        margin: const EdgeInsets.all(16),
-      ),
-    );
-
     // Navigate to next screen
     Navigator.pushReplacementNamed(context, '/password');
   }

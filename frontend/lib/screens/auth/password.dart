@@ -256,14 +256,6 @@ class _PasswordScreenState extends State<PasswordScreen> {
       // For demo purposes, accept any non-empty password
       // In a real app, you would verify against your authentication service
       if (password.length >= 4) {
-        // Success - navigate to main app or show success
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Login successful!'),
-            backgroundColor: Colors.green,
-          ),
-        );
-
         // Navigate to main screen
         Navigator.pushNamed(context, '/home');
 

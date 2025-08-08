@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 // each button and text should define meaning, regarding there position, size and color
 // nothing exist out of random
 // i can feel and smell code
+// really need good refactoring and should be completed end of this week
+
 class HomeScreen extends StatefulWidget {
   @override
   State<HomeScreen> createState() => _HomeScreenState();
