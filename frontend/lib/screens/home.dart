@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 // instead of the word chat, need chat icon
 // each button and text should define meaning, regarding there position, size and color
 // nothing exist out of random
+// i can feel and smell code
 class HomeScreen extends StatefulWidget {
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -139,12 +140,15 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           ),
         ),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.search, color: Colors.white),
-            onPressed: () {
-              // Implement search functionality
-            },
-          ),
+          // can be implemented if needed
+          // IconButton(
+          //   icon: const Icon(Icons.search, color: Colors.white),
+          //   onPressed: () {
+          //     // Implement search functionality
+          //     print("Search functionality");
+          //
+          //   },
+          // ),
           IconButton(
             icon: const Icon(Icons.menu, color: Colors.white),
             onPressed: _toggleDrawer,
@@ -453,6 +457,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         ),
       ),
       onTap: () {
+        Navigator.pushNamed(context, '/creategroup');
         _closeDrawer();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
