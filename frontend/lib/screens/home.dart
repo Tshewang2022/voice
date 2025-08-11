@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 // dateline 30/10/2025
 // need to make into the modular components
 // should be complete ui by today
-
+// its not a rocket science, i can do it and everybody can do it
 class HomeScreen extends StatefulWidget {
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -438,6 +438,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               child: ListView(
                 padding: EdgeInsets.zero,
                 children: [
+                  // the click button should redirect to each of this list
                   _buildDrawerItem(Icons.group, 'New Group'),
                   _buildDrawerItem(Icons.person_add, 'Contacts'),
                   _buildDrawerItem(Icons.settings, 'Settings'),
@@ -464,16 +465,32 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         ),
       ),
       onTap: () {
-
-        // this is the wrong concept
-        Navigator.pushNamed(context, '/creategroup');
         _closeDrawer();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('$title tapped'),
-            duration: const Duration(seconds: 1),
-          ),
-        );
+        // we can use the switch case statement here
+        switch(title){
+          case "New Group":
+            Navigator.pushNamed(context, '/creategroup');
+            break;
+          case "Contacts":
+            Navigator.pushNamed(context, '/addperson');
+            break;
+
+          case "Settings":
+            Navigator.pushNamed(context, '/setting');
+            break;
+          case "Help":
+            Navigator.pushNamed(context, '/help');
+            break;
+          case "Logout":
+            Navigator.pushNamed(context, '/logout');
+            break;
+
+            // is something unrelated is being clicked, fall back to home screen
+          default:
+            Navigator.pushNamed(context, '/home');
+
+        }
+
       },
     );
   }

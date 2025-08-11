@@ -6,6 +6,7 @@ import 'package:frontend/screens/contacts/addperson.dart';
 import 'package:frontend/screens/contacts/creategroup.dart';
 import 'package:frontend/screens/home.dart';
 import 'package:frontend/screens/auth/login.dart';
+import 'package:frontend/screens/setting/setting.dart';
 
 
 void main(){
@@ -27,6 +28,7 @@ class VoiceApp extends StatelessWidget{
         '/groupchat':(context)=>GroupchatScreen(),
         '/addperson':(context)=>Addperson(),
         '/creategroup':(context)=> CreateGroup(),
+        '/setting':(context)=> SettingScreen()
       }
     );
   }
