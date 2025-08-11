@@ -1,17 +1,12 @@
 import 'package:flutter/material.dart';
 // dateline 30/10/2025
-// need to spread into the modular components
-// instead of the word chat, need chat icon
-// each button and text should define meaning, regarding there position, size and color
-// nothing exist out of random
-// i can feel and smell code
-// really need good refactoring and should be completed end of this week
+// need to make into the modular components
+// should be complete ui by today
 
 class HomeScreen extends StatefulWidget {
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
-// i just wanted to solve the real world problems
 
 class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   int _selectedTab = 0;
@@ -71,9 +66,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     },
   ];
 
-  // should display only the group that he is in
-  // it should be broken down into the smaller code base
-  // for easier maintenance
   final List<Map<String, dynamic>> _groups = [
     {
       'name': 'Flutter Developers',
@@ -125,6 +117,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     ));
   }
 
+  // enjoy each and every moments
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -142,22 +135,14 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           ),
         ),
         actions: [
-          // can be implemented if needed
-          // IconButton(
-          //   icon: const Icon(Icons.search, color: Colors.white),
-          //   onPressed: () {
-          //     // Implement search functionality
-          //     print("Search functionality");
-          //
-          //   },
-          // ),
           IconButton(
             icon: const Icon(Icons.menu, color: Colors.white),
             onPressed: _toggleDrawer,
           ),
         ],
       ),
-      // Show FloatingActionButton only when drawer is closed AND on chats tab
+
+      // floating action button
       floatingActionButton: (_selectedTab == 0 && !_isDrawerOpen) ? Container(
         width: 56,
         height: 56,
@@ -175,7 +160,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           ),
         ),
       ) : null,
+      // location of the button
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+
+      // main body section
       body: Stack(
         children: [
           Column(
@@ -186,7 +174,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 child: Row(
                   children: [
                     _buildTab("Chats", 0),
-                    _buildTab("Groups", 1),
+                    _buildTab("Groups", 1)
                   ],
                 ),
               ),
@@ -217,6 +205,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     );
   }
 
+  // tabs for the chat and group
   Widget _buildTab(String title, int index) {
     final isSelected = _selectedTab == index;
     return Expanded(
@@ -250,6 +239,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     );
   }
 
+  // displaying the chat list
   Widget _buildChatsList() {
     return ListView.builder(
       itemCount: _chats.length,
@@ -260,6 +250,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     );
   }
 
+  // displaying the group list but actually targeting the same widgets
   Widget _buildGroupsList() {
     return ListView.builder(
       itemCount: _groups.length,
@@ -270,11 +261,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     );
   }
 
+  // it is targeting this same widgets
   Widget _buildChatItem(Map<String, dynamic> item, bool isGroup) {
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       leading: Stack(
         children: [
+          // profile avatar
           CircleAvatar(
             radius: 25,
             backgroundColor: const Color(0xFF0088CC),
@@ -287,6 +280,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               ),
             ),
           ),
+
+          // online status
           if (!isGroup && item['isOnline'])
             Positioned(
               bottom: 0,
@@ -337,6 +332,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               ),
             ),
           ),
+
+          // unread message count
           if (item['unreadCount'] > 0)
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
@@ -355,13 +352,21 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             ),
         ],
       ),
+      // this single tab is targeting both the chat and group_chat
       onTap: () {
-        // Navigate to chat screen
-       Navigator.pushNamed(context, '/chats');
+        // Navigate to chat screen, this will introduce bug to the system
+        /** better fix it in the clean way **/
+
+       if(_selectedTab==0){
+          Navigator.pushNamed(context, '/chats');
+       }else{
+         Navigator.pushNamed(context, '/groupchat');
+       }
       },
     );
   }
 
+  // need to optimize this one
   Widget _buildCustomDrawer() {
     return Align(
       alignment: Alignment.centerRight,
@@ -459,6 +464,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         ),
       ),
       onTap: () {
+
+        // this is the wrong concept
         Navigator.pushNamed(context, '/creategroup');
         _closeDrawer();
         ScaffoldMessenger.of(context).showSnackBar(

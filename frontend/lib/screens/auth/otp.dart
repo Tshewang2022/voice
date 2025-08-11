@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:async';
+// it was supposed to be completed by yesterday
+// report writing for the last week
+// completing the ui part of the chat app
 
 class OtpScreen extends StatefulWidget {
   final String? phoneNumber;
