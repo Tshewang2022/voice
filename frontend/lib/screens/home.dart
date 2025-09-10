@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-// dateline 30/10/2025
-// need to make into the modular components
-// should be complete ui by today
-// its not a rocket science, i can do it and everybody can do it
+
+// organizing them in the components
 class HomeScreen extends StatefulWidget {
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -135,10 +133,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           ),
         ),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.menu, color: Colors.white),
-            onPressed: _toggleDrawer,
-          ),
+          // Hide menu icon when drawer is open
+          if (!_isDrawerOpen)
+            IconButton(
+              icon: const Icon(Icons.menu, color: Colors.white),
+              onPressed: _toggleDrawer,
+            ),
         ],
       ),
 
@@ -149,7 +149,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         margin: const EdgeInsets.only(bottom: 80, right: 16),
         child: FloatingActionButton(
           onPressed: () {
-           Navigator.pushNamed(context, '/addperson');
+            Navigator.pushNamed(context, '/addperson');
           },
           backgroundColor: const Color(0xFF0088CC),
           elevation: 6,
@@ -195,7 +195,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               ),
             ),
 
-          // Custom drawer
+          // Custom drawer - Full height like Telegram
           SlideTransition(
             position: _drawerSlideAnimation,
             child: _buildCustomDrawer(),
@@ -357,22 +357,22 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         // Navigate to chat screen, this will introduce bug to the system
         /** better fix it in the clean way **/
 
-       if(_selectedTab==0){
+        if(_selectedTab==0){
           Navigator.pushNamed(context, '/chats');
-       }else{
-         Navigator.pushNamed(context, '/groupchat');
-       }
+        }else{
+          Navigator.pushNamed(context, '/groupchat');
+        }
       },
     );
   }
 
-  // need to optimize this one
+  // Full height drawer like Telegram
   Widget _buildCustomDrawer() {
     return Align(
       alignment: Alignment.centerRight,
       child: Container(
         width: MediaQuery.of(context).size.width * 0.75,
-        height: double.infinity,
+        height: double.infinity, // Full height from top to bottom
         decoration: const BoxDecoration(
           color: Colors.white,
           boxShadow: [
@@ -383,13 +383,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             ),
           ],
         ),
-        child: Column(
-          children: [
-            // Drawer header
-            Container(
-              padding: const EdgeInsets.all(20),
-              color: const Color(0xFF0088CC),
-              child: SafeArea(
+        child: SafeArea(
+          child: Column(
+            children: [
+              // Drawer header
+              Container(
+                padding: const EdgeInsets.all(20),
+                color: const Color(0xFF0088CC),
                 child: Row(
                   children: [
                     const CircleAvatar(
@@ -404,18 +404,22 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     const SizedBox(width: 15),
                     const Expanded(
                       child: Column(
+                        // this design does not fit into the current design if
+                        // it has more than 2 name
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Your Name',
+                            'Tshewang Gyaltshen Karma',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 18,
                               fontWeight: FontWeight.w600,
                             ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
                           ),
                           Text(
-                            '+1 234 567 8900',
+                            '+17760818',
                             style: TextStyle(
                               color: Colors.white70,
                               fontSize: 14,
@@ -431,24 +435,24 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   ],
                 ),
               ),
-            ),
 
-            // Drawer items
-            Expanded(
-              child: ListView(
-                padding: EdgeInsets.zero,
-                children: [
-                  // the click button should redirect to each of this list
-                  _buildDrawerItem(Icons.group, 'New Group'),
-                  _buildDrawerItem(Icons.person_add, 'Contacts'),
-                  _buildDrawerItem(Icons.settings, 'Settings'),
-                  const Divider(),
-                  _buildDrawerItem(Icons.help_outline, 'Help'),
-                  _buildDrawerItem(Icons.logout, 'Logout'),
-                ],
+              // Drawer items
+              Expanded(
+                child: ListView(
+                  padding: EdgeInsets.zero,
+                  children: [
+                    // the click button should redirect to each of this list
+                    _buildDrawerItem(Icons.group, 'New Group'),
+                    _buildDrawerItem(Icons.person_add, 'Contacts'),
+                    _buildDrawerItem(Icons.settings, 'Settings'),
+                    const Divider(),
+                    _buildDrawerItem(Icons.help_outline, 'Help'),
+                    _buildDrawerItem(Icons.logout, 'Logout'),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -482,15 +486,45 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             Navigator.pushNamed(context, '/help');
             break;
           case "Logout":
-            Navigator.pushNamed(context, '/logout');
+            _showLogoutDialog();
             break;
 
-            // is something unrelated is being clicked, fall back to home screen
+        // is something unrelated is being clicked, fall back to home screen
           default:
             Navigator.pushNamed(context, '/home');
-
         }
+      },
+    );
+  }
 
+  void _showLogoutDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Logout'),
+          content: const Text('Are you sure you want to logout?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  '/login',
+                      (route) => false,
+                );
+              },
+              child: const Text(
+                'Logout',
+                style: TextStyle(color: Colors.red),
+              ),
+            ),
+          ],
+        );
       },
     );
   }

@@ -11,7 +11,6 @@ class SettingScreen extends StatefulWidget {
 class _SettingScreenState extends State<SettingScreen> {
   bool _biometricEnabled = false;
   bool _twoStepVerification = false;
-  bool _passcodeEnabled = true;
 
   @override
   Widget build(BuildContext context) {
@@ -57,36 +56,7 @@ class _SettingScreenState extends State<SettingScreen> {
                 activeColor: const Color(0xFF0088CC),
               ),
             ),
-            _buildDivider(),
-            _buildSettingsTile(
-              icon: Icons.lock,
-              title: 'Passcode Lock',
-              subtitle: 'Require passcode to open app',
-              trailing: Switch(
-                value: _passcodeEnabled,
-                onChanged: (value) {
-                  setState(() {
-                    _passcodeEnabled = value;
-                  });
-                },
-                activeColor: const Color(0xFF0088CC),
-              ),
-            ),
-            _buildDivider(),
-            _buildSettingsTile(
-              icon: Icons.security,
-              title: 'Two-Step Verification',
-              subtitle: _twoStepVerification ? 'Enabled' : 'Add password',
-              trailing: Switch(
-                value: _twoStepVerification,
-                onChanged: (value) {
-                  setState(() {
-                    _twoStepVerification = value;
-                  });
-                },
-                activeColor: const Color(0xFF0088CC),
-              ),
-            ),
+
             _buildDivider(),
             _buildSettingsTile(
               icon: Icons.visibility_off,
@@ -188,7 +158,7 @@ class _SettingScreenState extends State<SettingScreen> {
 
           const SizedBox(width: 16),
 
-          // Profile Info
+          // Profile Info, we can minimized the multiple screen
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -197,7 +167,7 @@ class _SettingScreenState extends State<SettingScreen> {
                   children: [
                     const Expanded(
                       child: Text(
-                        'Your Name',
+                        'Tshewang Gyaltshen',
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
@@ -225,26 +195,26 @@ class _SettingScreenState extends State<SettingScreen> {
                   children: [
                     const Expanded(
                       child: Text(
-                        '+1 234 567 8900',
+                        '+17760818',
                         style: TextStyle(
                           fontSize: 14,
                           color: Colors.grey,
                         ),
                       ),
                     ),
-                    GestureDetector(
-                      onTap: () {
-                        // Navigate to mobile number edit
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Edit Mobile Number tapped')),
-                        );
-                      },
-                      child: const Icon(
-                        Icons.edit,
-                        size: 16,
-                        color: Color(0xFF0088CC),
-                      ),
-                    ),
+                    // GestureDetector(
+                    //   onTap: () {
+                    //     // Navigate to mobile number edit
+                    //     ScaffoldMessenger.of(context).showSnackBar(
+                    //       const SnackBar(content: Text('Edit Mobile Number tapped')),
+                    //     );
+                    //   },
+                    //   child: const Icon(
+                    //     Icons.edit,
+                    //     size: 16,
+                    //     color: Color(0xFF0088CC),
+                    //   ),
+                    // ),
                   ],
                 ),
                 const SizedBox(height: 4),
