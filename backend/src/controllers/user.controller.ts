@@ -2,13 +2,16 @@ import { PrismaClient } from '@prisma/client';
 import { Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
 import { get, setWithExpiry } from '../config/redis.config';
-import { generateOpt } from '../functions/generateopt';
 import ApiError from '../utils/ApiError';
 import bcrypt from 'bcryptjs';
+
 import { registerUserSchema, loginUserSchema } from '../validations/auth.validation';
 
 const prisma = new PrismaClient();
-
+// this code has to be optimized
+// otp should be stored only for the 30 seconds
+// should be done, for the login and register today, with the load testing 
+// timing should be bit more strict from today
 // The registration process should be as short as possible
 const registerUser = asyncHandler(async (req: Request, res: Response) => {
     const { error, value } = registerUserSchema.validate(req.body);
@@ -39,7 +42,7 @@ const registerUser = asyncHandler(async (req: Request, res: Response) => {
     const hashedPassword = await bcrypt.hash(password, 12);
 
 
-    // Create new user
+    // Create new user, everything is a art. master it
     const newUser = await prisma.users.create({
         data: {
             first_name,
