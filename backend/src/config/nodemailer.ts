@@ -1,18 +1,17 @@
 import nodemailer, { Transporter } from "nodemailer";
+import dotenv from 'dotenv';
 
+dotenv.config();
 const user = process.env.SMTP_USER as string;
 const password = process.env.SMTP_PASS as string;
 
-if (!user || !password) {
-    throw new Error("SMTP_USER and SMTP_PASS must be set in environment variables");
-}
 
 const transporter: Transporter = nodemailer.createTransport({
     host: "smtp-relay.brevo.com",
     port: 587,
-    secure: false, // use TLS
+    secure: false,
     auth: {
-        user,
+        user: user,
         pass: password,
     },
 });

@@ -102,4 +102,4 @@ const closeRedisConnection = async (): Promise<void> => {
     }
 };
 
-export { get, setWithExpiry, del, getRedisClient, closeRedisConnection };
+export { get, setWithExpiry, del, closeRedisConnection };
