@@ -13,6 +13,7 @@
   "license": "ISC",
   "dependencies": {
     "@prisma/client": "^6.16.0",
+    "bcryptjs": "^3.0.2",
     "dotenv": "^17.2.1",
     "express": "^5.1.0",
     "express-async-handler": "^1.2.0",
@@ -20,6 +21,7 @@
     "joi": "^18.0.1",
     "nodemon": "^3.1.10",
     "prisma": "^6.16.0",
+    "redis": "^5.8.2",
     "socket.io": "^4.8.1",
     "websocket": "^1.0.35",
     "winston": "^3.17.0"
