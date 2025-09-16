@@ -5,6 +5,12 @@ import ApiError from '../utils/ApiError';
 import { setWithExpiry } from '../config/redis.config';
 // complete and robust, authentication system will be build this week
 // i need to do the load testing on this api
+// for the invalid email, it should not crash the server, but show proper error handling message
+// need fix
+// and need rate limiting for this api, cannot request more than 5 times and have to wait till 30s to 
+// pass to request new otp;
+// more than that, someting is wrong with the email or the backend code
+// i forgot one thing that is device token
 const generateOtp = async (req: Request, res: Response) => {
     const { error, value } = validateEmailSchema.validate(req.body);
 
