@@ -77,7 +77,7 @@ const loginUser = asyncHandler(async(req:Request, res:Response)=>{
     })
 
     if(!user){
-       throw new ApiError(404, 'User not found'); 
+       throw new ApiError(404, 'User not foun'); 
     }
 
     // there is risk where it can introduce bug in here
