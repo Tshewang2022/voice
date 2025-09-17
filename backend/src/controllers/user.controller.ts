@@ -6,6 +6,7 @@ import ApiError from '../utils/ApiError';
 import bcrypt from 'bcryptjs';
 
 import { registerUserSchema, loginUserSchema } from '../validations/auth.validation';
+import { decrypt } from 'dotenv';
 
 const prisma = new PrismaClient();
 const registerUser = asyncHandler(async (req: Request, res: Response) => {
@@ -14,7 +15,7 @@ const registerUser = asyncHandler(async (req: Request, res: Response) => {
         throw new ApiError(400, error.details[0].message);
     }
 
-    const { first_name, last_name, email, password, phone } = value;
+    const { first_name, last_name, email, password, phone, otp } = value;
 
     // Check if user exists in cache first (faster lookup)
     const cachedUser = await get(`user:phone:${phone}`);
@@ -22,16 +23,18 @@ const registerUser = asyncHandler(async (req: Request, res: Response) => {
         throw new ApiError(409, 'User already exists');
     }
 
+    // need to optimize this solutions
+    const getOtp = await get(`otp:${email}`); 
+    if(!getOtp){
+        throw new ApiError(404, 'otp from redis cannot be empty');
+    }
+    // console.log(getOtp, 'otp from the redis');
+    if(getOtp!=otp){
+        throw new ApiError(400, 'Invalid OTP'); // this solution is not good
+    }
+    // authenticate it
 
-    // if (existingUser) {
-    //     // Cache the existing user info to avoid future DB queries
-    //     await setWithExpiry(`user:phone:${phone}`, JSON.stringify({ exists: true }), 3600); // Cache for 1 hour
-    //     throw new ApiError(409, 'User already exists');
-    // }
-
-    // Hash password with higher salt rounds for better security
     const hashedPassword = await bcrypt.hash(password, 12);
-
 
     // Create new user, everything is a art. master it
     const newUser = await prisma.users.create({
@@ -52,10 +55,6 @@ const registerUser = asyncHandler(async (req: Request, res: Response) => {
             // Exclude password and sensitive fields from response
         }
     });
-
-    // Cache the user data for future lookups
-    await setWithExpiry(`phone:${phone}`, JSON.stringify(newUser), 3600); // Cache for 1 hour
-    await setWithExpiry(`user_id:${newUser.id}`, JSON.stringify(newUser), 3600);
     res.status(201).json({
         success: true,
         message: 'Account registered successfully',
@@ -63,6 +62,37 @@ const registerUser = asyncHandler(async (req: Request, res: Response) => {
     });
 });
 
+const loginUser = asyncHandler(async(req:Request, res:Response)=>{
+    const {error, value} = loginUserSchema.validate(req.body);
+    if (error) {
+        throw new ApiError(400, error.details[0].message);
+    }
+
+    const {phone, password}= value;
+    // check the user
+    const user = await prisma.users.findUnique({
+        where:{
+            phone:phone
+        }
+    })
+
+    if(!user){
+       throw new ApiError(404, 'User not found'); 
+    }
+
+    // there is risk where it can introduce bug in here
+    const isMatched = await bcrypt.compare(password, user.password);
+    if(!isMatched){
+        throw new ApiError(401, 'Invalid credentials');
+    }
+
+    res.status(200).json({
+        success: true,
+        message:"Login successfully",
+        data: user
+    })
+
+})
 // Don't forget to handle Prisma client cleanup
 process.on('beforeExit', async () => {
     await prisma.$disconnect();

@@ -22,7 +22,7 @@ const generateOtp = async (req: Request, res: Response) => {
     }
 
     await transporter.sendMail(mailOptions);
-    await setWithExpiry(`otp:${email}`, otp, 60);
+    await setWithExpiry(`otp:${email}`, otp, 3600);
     res.status(201).json({
         success: true,
         message: "OTP sent successfully in your email",
