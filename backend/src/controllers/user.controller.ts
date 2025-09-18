@@ -6,7 +6,7 @@ import { generateAuthToken } from '../utils/token';
 import ApiError from '../utils/ApiError';
 import bcrypt from 'bcryptjs';
 
-import { registerUserSchema, loginUserSchema } from '../validations/auth.validation';
+import { registerUserSchema, loginUserSchema, validateEmailSchema } from '../validations/auth.validation';
 
 const prisma = new PrismaClient();
 const registerUser = asyncHandler(async (req: Request, res: Response) => {
@@ -96,9 +96,46 @@ const loginUser = asyncHandler(async(req:Request, res:Response)=>{
     })
 
 })
+
+const forgotPassword = asyncHandler(async(req:Request, res:Response)=>{
+    const {error, value} = validateEmailSchema.validate(req.body);
+    if(error){
+        throw new ApiError(400, error.details[0].message);
+    }
+    // email should be replace by phone number
+    const {email, otp, password} = value;
+    const user = await prisma.users.findUnique({
+        where:{email:email}, select:{email:true}
+    })
+
+    if(!user){
+        throw new ApiError(404, 'Email not registered. Please register')
+    }
+    // get otp from redis and validate it
+    const getOtp = await get(`otp:${email}`);
+    if(getOtp!=otp){
+        throw new ApiError(400, 'Invalid otp');
+    }
+
+    const hashedPassword = await bcrypt.hash(password,10);
+    const updateUser = await prisma.users.update({
+        where:{email:email},
+        data:{
+            password:hashedPassword,
+        }
+    })
+    res.status(201).json({
+        success:true,
+        message:"Password updated successfully",
+        data:updateUser
+    })
+
+
+})
+
 // Don't forget to handle Prisma client cleanup
 process.on('beforeExit', async () => {
     await prisma.$disconnect();
 });
 
-export { registerUser, loginUser };
+export { registerUser, loginUser, forgotPassword };
