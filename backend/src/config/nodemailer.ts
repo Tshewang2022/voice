@@ -7,6 +7,7 @@ import ApiError from "../utils/ApiError";
 dotenv.config();
 const user = process.env.SMTP_USER as string;
 const password = process.env.SMTP_PASS as string;
+const token = process.env.JWT_ACCESS_SECRET as string;
 if (!user && !password) {
     throw new ApiError(400, 'Required username and password to send smtp brevo mail');
 }

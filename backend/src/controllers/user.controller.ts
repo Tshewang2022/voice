@@ -2,11 +2,11 @@ import { PrismaClient } from '@prisma/client';
 import { Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
 import { get, setWithExpiry } from '../config/redis.config';
+import { generateAuthToken } from '../utils/token';
 import ApiError from '../utils/ApiError';
 import bcrypt from 'bcryptjs';
 
 import { registerUserSchema, loginUserSchema } from '../validations/auth.validation';
-import { decrypt } from 'dotenv';
 
 const prisma = new PrismaClient();
 const registerUser = asyncHandler(async (req: Request, res: Response) => {
@@ -28,7 +28,7 @@ const registerUser = asyncHandler(async (req: Request, res: Response) => {
     if(!getOtp){
         throw new ApiError(404, 'otp from redis cannot be empty');
     }
-    // console.log(getOtp, 'otp from the redis');
+    // console.log(getOtp, 'otp from the redis'); the data type should be same
     if(getOtp!=otp){
         throw new ApiError(400, 'Invalid OTP'); // this solution is not good
     }
@@ -73,7 +73,7 @@ const loginUser = asyncHandler(async(req:Request, res:Response)=>{
     const user = await prisma.users.findUnique({
         where:{
             phone:phone
-        }
+        },
     })
 
     if(!user){
@@ -86,10 +86,13 @@ const loginUser = asyncHandler(async(req:Request, res:Response)=>{
         throw new ApiError(401, 'Invalid credentials');
     }
 
+    // genrate token
+    const token = generateAuthToken(user.id);
     res.status(200).json({
         success: true,
         message:"Login successfully",
-        data: user
+        data: user,// i dont want tonsend everything to the frontend;(only, first_name, last_name, email, and phone);
+        token:token
     })
 
 })
@@ -98,4 +101,4 @@ process.on('beforeExit', async () => {
     await prisma.$disconnect();
 });
 
-export { registerUser };
+export { registerUser, loginUser };
