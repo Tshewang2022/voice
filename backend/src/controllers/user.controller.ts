@@ -62,6 +62,7 @@ const registerUser = asyncHandler(async (req: Request, res: Response) => {
     });
 });
 
+// when user try to login. look for the account status too. if false, should not be able to login into the account
 const loginUser = asyncHandler(async(req:Request, res:Response)=>{
     const {error, value} = loginUserSchema.validate(req.body);
     if (error) {

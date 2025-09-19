@@ -7,4 +7,12 @@ const updateProfileSchema =Joi.object({
     phone: Joi.string().min(8).required(),
 })
 
-export{updateProfileSchema};
+const deactivateAcctSchema = Joi.object({
+    user_id: Joi.string().required(),
+    is_deactivated: Joi.boolean().required()
+})
+
+const blockUserSchema = Joi.object({
+    phone: Joi.string().min(8).required(),
+})
+export{updateProfileSchema, deactivateAcctSchema, blockUserSchema};

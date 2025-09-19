@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
 import asyncHandler from 'express-async-handler';
-import { updateProfileSchema } from "../../validations/setting.validation";
+import { deactivateAcctSchema, updateProfileSchema } from "../../validations/setting.validation";
 import ApiError from "../../utils/ApiError";
 const prisma =new PrismaClient();
 
@@ -42,11 +42,44 @@ const updateProfile =asyncHandler(async(req:Request, res:Response)=>{
 })
 // all the following need to have the database table;
 
-// biometric login // should be implemented only frontend code.
-
 // privacy settings
+const deactivateAccount =asyncHandler(async(req:Request, res:Response)=>{
+    const {error, value} = deactivateAcctSchema.validate(req.body);
+    if(error){
+        throw new ApiError(400, error.details[0].message);
+    }
 
-// blocked users
+    // changing account status from is_active to false;
+    const {user_id, is_deactivated} = value;
+    const user = await prisma.users.findUnique({
+        where:{id:user_id}
+    })
+    if(!user){
+        throw new ApiError(404, 'User not found')
+    }
+
+    const updateAcctStatus = await prisma.accountSettings.update({
+        where:{user_id:user_id},
+        data:{
+            is_account_deactivated:is_deactivated
+        }
+    })
+
+    res.status(200).json({
+        success:true,
+        message:"Account updated successfully",
+        data:updateAcctStatus
+    })
+
+})
+
+// blocked users// probably need the database for this
+const blockUser =asyncHandler(async(req:Request, res:Response)=>{
+    const {error,value} = req.body;
+})
 
 // delete account => account_status=> inactive;
-export{updateProfile};
+// you cannot permantly delete the account, just move them the to achieve part of the db
+// even if you delete the social media, it really never get deleted from the server, because they need your information
+
+export{updateProfile, deactivateAccount};
