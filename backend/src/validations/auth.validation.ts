@@ -18,9 +18,9 @@ const validateEmailSchema = Joi.object({
     email: Joi.string().email().required(),
 })
 
-const validateOtp = Joi.object({
+const validateOtpSchema = Joi.object({
     email: Joi.string().email().required(),
     otp:Joi.number().required(),
     password: Joi.string().min(3).required(),
 })
-export { registerUserSchema, loginUserSchema, validateEmailSchema };
+export { registerUserSchema, loginUserSchema, validateEmailSchema , validateOtpSchema};

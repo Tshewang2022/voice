@@ -6,7 +6,7 @@ import { generateAuthToken } from '../utils/token';
 import ApiError from '../utils/ApiError';
 import bcrypt from 'bcryptjs';
 
-import { registerUserSchema, loginUserSchema, validateEmailSchema } from '../validations/auth.validation';
+import { registerUserSchema, loginUserSchema, validateEmailSchema, validateOtpSchema } from '../validations/auth.validation';
 
 const prisma = new PrismaClient();
 const registerUser = asyncHandler(async (req: Request, res: Response) => {
@@ -98,7 +98,7 @@ const loginUser = asyncHandler(async(req:Request, res:Response)=>{
 })
 
 const forgotPassword = asyncHandler(async(req:Request, res:Response)=>{
-    const {error, value} = validateEmailSchema.validate(req.body);
+    const {error, value} =  validateOtpSchema.validate(req.body);
     if(error){
         throw new ApiError(400, error.details[0].message);
     }
