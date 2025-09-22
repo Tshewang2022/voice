@@ -13,6 +13,11 @@ const deactivateAcctSchema = Joi.object({
 })
 
 const blockUserSchema = Joi.object({
+    user_id: Joi.string().required(),
+})
+
+const createBlockList =Joi.object({
+    user_id: Joi.string().required(),
     phone: Joi.string().min(8).required(),
 })
-export{updateProfileSchema, deactivateAcctSchema, blockUserSchema};
+export{updateProfileSchema, deactivateAcctSchema, blockUserSchema, createBlockList};

@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
 import asyncHandler from 'express-async-handler';
-import { deactivateAcctSchema, updateProfileSchema } from "../../validations/setting.validation";
+import { blockUserSchema, deactivateAcctSchema, updateProfileSchema, createBlockList } from "../../validations/setting.validation";
 import ApiError from "../../utils/ApiError";
 const prisma =new PrismaClient();
 
@@ -73,14 +73,54 @@ const deactivateAccount = asyncHandler(async(req:Request, res:Response)=>{
 
 })
 
-// blocked users// probably need the database for this
-const blockUser =asyncHandler(async(req:Request, res:Response)=>{
-    const {error,value} = req.body;
-    // this will target different tables
+// from today onwards, it will be laser focused on one thing, that is creating the chat application
+// my dateline is only 1 month left now. need to do more work and put more effort from here onwards;
+const getBlockedUsers = asyncHandler(async(req:Request, res:Response)=>{
+    const {error, value} = blockUserSchema.validate(req.body);
+    if(error){
+        throw new ApiError(400, error.details[0].message)
+    }
+    // user_id, n:n => this will give an issue
+    const {user_id} = value;
+
+    // sometimes giving the sync issues;
+    const user = await prisma.blockedUser.findMany({
+        where:{user_id:user_id}
+    })
+    if(!user){
+        throw new ApiError(404, 'No block list found');
+    }
+
+    // else give all the list of blocked list
+    res.status(200).json({
+        success:true,
+        data:user,
+        message:"Blocked contact list successfully fetched"
+    })
+
 })
 
-// delete account => account_status=> inactive;
-// you cannot permantly delete the account, just move them the to achieve part of the db
-// even if you delete the social media, it really never get deleted from the server, because they need your information
+// to block users from the chat
+const blockUser = asyncHandler(async(req:Request, res:Response)=>{
+    const {error, value} = createBlockList.validate(req.body);
+    if(error){
+        throw new ApiError(400, error.details[0].message)
+    }
+    const {user_id, phone} = value;
+    const findUserByPhone = await prisma.blockedUser.findFirst({
+        where: { phone: phone }
+    })
 
-export{updateProfile, deactivateAccount};
+    if (findUserByPhone) {
+        // User is already blocked
+        res.status(400).json({ message: "User is already blocked." });
+    } else {
+        // Block the user
+        const blockedUser = await prisma.blockedUser.create({
+            data: { user_id, phone }
+        });
+    res.status(201).json({ message: "User blocked successfully.", blockedUser });
+    }
+})
+
+export{updateProfile, deactivateAccount, getBlockedUsers, blockUser};

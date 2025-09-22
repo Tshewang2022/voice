@@ -1,3 +1,5 @@
+version: "3.8"
+
 services:
   postgres_db:
     image: postgres:13
@@ -11,7 +13,10 @@ services:
     ports:
       - "1234:5432"
     volumes:
+      # Persist Postgres data
       - postgres_data:/var/lib/postgresql/data
+      # Persist Prisma migrations (bind mount from host project folder)
+      - ./prisma/migrations:/migrations
 
   redis:
     image: redis:7
