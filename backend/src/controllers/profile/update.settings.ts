@@ -43,7 +43,7 @@ const updateProfile =asyncHandler(async(req:Request, res:Response)=>{
 // all the following need to have the database table;
 
 // privacy settings
-const deactivateAccount =asyncHandler(async(req:Request, res:Response)=>{
+const deactivateAccount = asyncHandler(async(req:Request, res:Response)=>{
     const {error, value} = deactivateAcctSchema.validate(req.body);
     if(error){
         throw new ApiError(400, error.details[0].message);
@@ -76,6 +76,7 @@ const deactivateAccount =asyncHandler(async(req:Request, res:Response)=>{
 // blocked users// probably need the database for this
 const blockUser =asyncHandler(async(req:Request, res:Response)=>{
     const {error,value} = req.body;
+    // this will target different tables
 })
 
 // delete account => account_status=> inactive;
