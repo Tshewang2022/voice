@@ -4,22 +4,17 @@ import asyncHandler from "express-async-handler";
 import { createContactListSchema, getContactListSchema } from "../validations/contactlist.validation";
 import ApiError from "../utils/ApiError";
 
-
+// will run the hacking  script
+// the code is getting exec, but it is throwing like the system error
 const prisma = new PrismaClient();
-// add to contact list
-// get from the contact list
-// update the contact list
-// scrap the contact list
-// need to have the access to the contact list=> then put the phone number into the database
+
 const getContactList =asyncHandler(async(req:Request, res:Response)=>{
     const {error, value} = getContactListSchema.validate(req.body);
     if(error){
         throw new ApiError(400, error.details[0].message)
     }
-
+    
     const {user_id} = value;
-    // definitly need to create a look up table for blocked users and contact list
-    // this will most probably give me annoying bug
     const contactList = await prisma.contactList.findMany({where:{user_id:user_id}});
 
     // this for checking the empty array;
@@ -37,9 +32,9 @@ const createContactList = asyncHandler(async(req:Request, res:Response)=>{
    }
 
    const {user_id, first_name, last_name, phone} = value;
-   const user = await prisma.contactList.findFirst({where:{user_id:user_id}});
+   const user = await prisma.contactList.findFirst({where:{phone:phone}});
    if(user){
-    throw new ApiError(404, 'No contact list found');
+    throw new ApiError(409, 'Phone number already added');
    }
 
     const newContact = await prisma.contactList.create({
@@ -53,10 +48,10 @@ const createContactList = asyncHandler(async(req:Request, res:Response)=>{
 
     res.status(201).json({
         status: "success",
+        message:"Contact created successfully",
         data: newContact,
-    });
-   
 
+    });
 });
 
 export {getContactList, createContactList};

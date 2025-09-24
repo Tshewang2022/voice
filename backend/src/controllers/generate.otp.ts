@@ -8,7 +8,7 @@ const generateOtp = async (req: Request, res: Response) => {
     const { error, value } = validateEmailSchema.validate(req.body);
 
     if (error) {
-        throw new ApiError(400, 'Invalid email')
+        throw new ApiError(400, error.details[0].message)
     }
     const { email } = value;
 

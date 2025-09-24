@@ -6,7 +6,7 @@ import { generateAuthToken } from '../utils/token';
 import ApiError from '../utils/ApiError';
 import bcrypt from 'bcryptjs';
 
-import { registerUserSchema, loginUserSchema, validateEmailSchema, validateOtpSchema } from '../validations/auth.validation';
+import { registerUserSchema, loginUserSchema, validateOtpSchema } from '../validations/auth.validation';
 
 const prisma = new PrismaClient();
 const registerUser = asyncHandler(async (req: Request, res: Response) => {
