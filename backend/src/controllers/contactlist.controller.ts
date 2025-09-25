@@ -15,13 +15,13 @@ const getContactList =asyncHandler(async(req:Request, res:Response)=>{
     }
     
     const {user_id} = value;
-    const contactList = await prisma.contactList.findMany({where:{user_id:user_id}});
+    const contactList = await prisma.contactList.findMany({where:{user_id:user_id}, select:{first_name:true,last_name:true, phone:true} });
 
     // this for checking the empty array;
     if(contactList.length === 0){
         throw new ApiError(404, 'No contact list found');
     }
-    res.status(200).json({ contactList });
+    res.status(200).json({ success:true, message:"List of contacts",data:contactList });
 
 });
 
