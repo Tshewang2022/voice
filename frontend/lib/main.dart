@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/screens/auth/optRequest.dart';
 import 'package:frontend/screens/auth/register.dart';
 import 'package:frontend/screens/onboarding.dart';
 import 'package:frontend/screens/chats/chat.dart';
@@ -26,6 +27,7 @@ class VoiceApp extends StatelessWidget{
         '/home':(context)=> HomeScreen(),
         '/login': (context) => Login(),
         '/register':(context)=>Register(),
+        '/otp-request':(context)=>OtpRequest(),
         '/chats':(context)=> Chats(),
         '/groupchat':(context)=>GroupchatScreen(),
         '/addperson':(context)=>Addperson(),

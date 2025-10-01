@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
+// localhost://3000/v1/register
+// localhost://3000/v1/common/generate-otp
 class Register extends StatefulWidget {
   const Register({super.key});
 
@@ -20,8 +24,14 @@ class _RegisterState extends State<Register> {
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
 
+  // Loading state
+  bool _isLoading = false;
+
   // Form key for validation
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  // API endpoint
+  static const String apiUrl = 'http://localhost:3000/v1/register';
 
   @override
   void dispose() {
@@ -43,6 +53,79 @@ class _RegisterState extends State<Register> {
   // Phone validation
   bool _isValidPhone(String phone) {
     return RegExp(r'^\+?[\d\s\-\(\)]{10,}$').hasMatch(phone);
+  }
+
+  // API Registration method
+  Future<void> _registerUser() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      // Prepare the request body
+      final Map<String, dynamic> requestBody = {
+        'firstName': _firstNameController.text.trim(),
+        'lastName': _lastNameController.text.trim(),
+        'email': _emailController.text.trim(),
+        'phone': _phoneController.text.trim(),
+        'password': _passwordController.text,
+      };
+
+      // Make the POST request
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(requestBody),
+      );
+
+      if (!mounted) return;
+
+      // Handle response
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        // Success
+        final responseData = jsonDecode(response.body);
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Registration successful!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+
+        // Navigate to login or home screen
+        Navigator.pop(context);
+
+      } else {
+        // Error from server
+        final errorData = jsonDecode(response.body);
+        String errorMessage = errorData['message'] ?? 'Registration failed';
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(errorMessage),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      // Network or other errors
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error: ${e.toString()}'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
   }
 
   @override
@@ -80,6 +163,7 @@ class _RegisterState extends State<Register> {
                 // First Name
                 TextFormField(
                   controller: _firstNameController,
+                  enabled: !_isLoading,
                   decoration: const InputDecoration(
                     labelText: 'First Name',
                     hintText: 'Enter your first name',
@@ -98,6 +182,7 @@ class _RegisterState extends State<Register> {
                 // Last Name
                 TextFormField(
                   controller: _lastNameController,
+                  enabled: !_isLoading,
                   decoration: const InputDecoration(
                     labelText: 'Last Name',
                     hintText: 'Enter your last name',
@@ -116,6 +201,7 @@ class _RegisterState extends State<Register> {
                 // Email
                 TextFormField(
                   controller: _emailController,
+                  enabled: !_isLoading,
                   keyboardType: TextInputType.emailAddress,
                   decoration: const InputDecoration(
                     labelText: 'Email',
@@ -138,6 +224,7 @@ class _RegisterState extends State<Register> {
                 // Phone
                 TextFormField(
                   controller: _phoneController,
+                  enabled: !_isLoading,
                   keyboardType: TextInputType.phone,
                   decoration: const InputDecoration(
                     labelText: 'Phone',
@@ -160,6 +247,7 @@ class _RegisterState extends State<Register> {
                 // Password
                 TextFormField(
                   controller: _passwordController,
+                  enabled: !_isLoading,
                   obscureText: _obscurePassword,
                   decoration: InputDecoration(
                     labelText: 'Password',
@@ -192,6 +280,7 @@ class _RegisterState extends State<Register> {
                 // Confirm Password
                 TextFormField(
                   controller: _confirmPasswordController,
+                  enabled: !_isLoading,
                   obscureText: _obscureConfirmPassword,
                   decoration: InputDecoration(
                     labelText: 'Confirm Password',
@@ -226,34 +315,23 @@ class _RegisterState extends State<Register> {
                   width: double.infinity,
                   height: 48,
                   child: ElevatedButton(
-                    onPressed: () {
+                    onPressed: _isLoading
+                        ? null
+                        : () {
                       if (_formKey.currentState!.validate()) {
-                        // Handle registration logic here
-                        String firstName = _firstNameController.text.trim();
-                        String lastName = _lastNameController.text.trim();
-                        String email = _emailController.text.trim();
-                        String phone = _phoneController.text.trim();
-                        String password = _passwordController.text;
-
-                        // For now, just print the values
-                        print('First Name: $firstName');
-                        print('Last Name: $lastName');
-                        print('Email: $email');
-                        print('Phone: $phone');
-                        print('Password: $password');
-
-                        // Show success message
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Registration data validated successfully!'),
-                            backgroundColor: Colors.green,
-                          ),
-                        );
-
-                        // Add your registration logic here
+                        _registerUser();
                       }
                     },
-                    child: const Text(
+                    child: _isLoading
+                        ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      ),
+                    )
+                        : const Text(
                       'Register',
                       style: TextStyle(fontSize: 16),
                     ),
@@ -267,8 +345,9 @@ class _RegisterState extends State<Register> {
                   children: [
                     const Text('Already have an account? '),
                     TextButton(
-                      onPressed: () {
-                        // Navigate to login screen
+                      onPressed: _isLoading
+                          ? null
+                          : () {
                         Navigator.pop(context);
                       },
                       child: const Text('Login'),
