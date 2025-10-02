@@ -4,7 +4,6 @@ import 'dart:convert';
 
 class OtpRequest extends StatefulWidget {
   const OtpRequest({super.key});
-
   @override
   State<OtpRequest> createState() => _OtpRequestScreenState();
 }
@@ -205,6 +204,7 @@ class _OtpRequestScreenState extends State<OtpRequest> {
                   height: 48,
                   child: ElevatedButton(
                     onPressed: _isLoading
+                        // navigate the verify otp screen
                         ? null
                         : () {
                       if (_formKey.currentState!.validate()) {
