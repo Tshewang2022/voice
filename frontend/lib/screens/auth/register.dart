@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-
+// the name of this app is called spark
 // localhost://3000/v1/register
 // it has the following payload: firstName, lastName, email, phone, password, confirmPassword
 class Register extends StatefulWidget {
@@ -105,7 +105,7 @@ class _RegisterState extends State<Register> {
     }
   }
 
-  @override
+  @override // this is the pre build functionality that should be implemented by default
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
