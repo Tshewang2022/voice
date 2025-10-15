@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'register.dart';
 
+// the design is very clunky and its needs to be improved by any means
 class OtpVerification extends StatefulWidget {
   final String email;
   final String phone;
