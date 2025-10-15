@@ -3,6 +3,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 // the name of this app is called spark
 // localhost://3000/v1/register
+// need to reduce the no of screens in the auth.
+// too much screen, adds complexity
 // it has the following payload: firstName, lastName, email, phone, password, confirmPassword
 class Register extends StatefulWidget {
   final String email;
