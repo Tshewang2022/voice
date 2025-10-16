@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-
+import 'package:go_router/go_router.dart';
 // this page should request only the
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -47,7 +47,7 @@ class _LoginState extends State<Login> {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         _showMessage('Login successful!');
-        Navigator.pushReplacementNamed(context, '/home');
+        context.go('/home');
       } else {
         final error = jsonDecode(response.body);
         _showMessage(error['message'] ?? 'Login failed', isError: true);
@@ -217,7 +217,7 @@ class _LoginState extends State<Login> {
                     TextButton(
                       onPressed: _isLoading
                           ? null
-                          : () => Navigator.pushNamed(context, '/register'),
+                          : () => context.push('/verify-phone'),
                       child: const Text('Register'),
                     ),
                   ],
