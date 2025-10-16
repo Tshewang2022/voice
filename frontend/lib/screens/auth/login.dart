@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+// this page should request only the
 class Login extends StatefulWidget {
   const Login({super.key});
 
@@ -216,7 +217,7 @@ class _LoginState extends State<Login> {
                     TextButton(
                       onPressed: _isLoading
                           ? null
-                          : () => Navigator.pushNamed(context, '/otp-request'),
+                          : () => Navigator.pushNamed(context, '/register'),
                       child: const Text('Register'),
                     ),
                   ],

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/screens/auth/otpRequest.dart';
-import 'package:frontend/screens/auth/verifyOtp.dart';
+import 'package:frontend/screens/auth/completeRegister.dart';
 import 'package:frontend/screens/home.dart';
 import 'package:frontend/screens/auth/login.dart';
 
@@ -19,18 +18,10 @@ class VoiceApp extends StatelessWidget {
         switch (settings.name) {
           case '/login':
             return MaterialPageRoute(builder: (_) => Login());
+          case '/register':
+            return MaterialPageRoute(builder: (_)=> Register());
           case '/home':
             return MaterialPageRoute(builder: (_) => HomeScreen());
-          case '/otp-request':
-            return MaterialPageRoute(builder: (_) => OtpRequest());
-          case '/verify-otp':
-            final args = settings.arguments as Map<String, String>;
-            return MaterialPageRoute(
-              builder: (_) => OtpVerification(
-                email: args['email']!,
-                phone: args['phone']!,
-              ),
-            );
           default:
             return MaterialPageRoute(builder: (_) => Login());
         }
